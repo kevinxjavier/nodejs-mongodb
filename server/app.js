@@ -6,19 +6,21 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
+// Permitir: Access-Control-Allow-Origin
+app.use(require('../cors/index'));
+
 /**
  * El body-parser se usa para que todas las peticiones contengan 
  * en el objeto req.body los datos que se llenan en un formulario
  * usando application/x-www-form-urlencoded de POSTMAN o del <form>.
  */
-
- // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }));
+ app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
 app.use(bodyParser.json());
 
-app.use(require('../routes/usuario'));
+// Configuracion Global de rutas
+app.use(require('../routes/index'));
 
 mongoose.connect(process.env_URLDB, {useNewUrlParser: true, useUnifiedTopology: true}, (err, res) => {
     if (err)

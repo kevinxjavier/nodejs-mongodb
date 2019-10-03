@@ -1,12 +1,12 @@
 const express = require('express');
-//const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt');
 const _ = require('underscore');
 const Usuario = require('../models/usuario');
+const { verificaToken, verificaAdminRole } = require('../middleware/autenticacion');
 const app = express();
 
-
-// $ curl http://localhost:3000/usuario?desde=10&limite=5
-app.get('/usuario', (req, res) => {
+// $ curl http://localhost:3000/usuario?desde=10&limite=5   # Enviar en el header el token si esta el middleware verificaToken
+app.get('/usuario', verificaToken, (req, res) => {
     let desde = Number(req.query.desde) || 0;
     let limite = Number(req.query.limite) || 5;
 
@@ -28,7 +28,7 @@ app.get('/usuario', (req, res) => {
 // Al usar body-parser req.body se carga con lo que venga en application/x-www-form-urlencoded
 // req.body contendra un objeto JSON con los datos que se envien en el formulario.
 // req.body tendra { nombre: 'Kevin', correo: 'Piña', password: '12456', role: 'ADMIN_ROLE' }
-app.post('/usuario', (req, res) => {
+app.post('/usuario', [verificaToken, verificaAdminRole], (req, res) => {
     let body = req.body;
 
     // No es necesario este if ya que Schema de mongoose los valida.
@@ -45,7 +45,7 @@ app.post('/usuario', (req, res) => {
         let usuario = new Usuario({
             nombre: body.nombre,
             email: body.correo,
-            password: body.password, //bcrypt.hashSync(body.password, 10),   // 10 es el numero de vueltas de encriptacion que se desea.
+            password: bcrypt.hashSync(body.password, 10),   // 10 es el numero de vueltas de encriptacion que se desea.
             role: body.role,
             estado: body.estado
         });
@@ -65,7 +65,7 @@ app.post('/usuario', (req, res) => {
 
 // $ curl http://localhost:3000/usuario/5d915d68bc96f20a7d50d5d6
 // req.params.parametro por defecto trabaja asi en express sin necesidad de body-parser
-app.put('/usuario/:idUsuario', (req, res) => {
+app.put('/usuario/:idUsuario', [verificaToken, verificaAdminRole], (req, res) => {
     let id = req.params.idUsuario;
 
     // let body = req.body;
@@ -93,7 +93,7 @@ app.put('/usuario/:idUsuario', (req, res) => {
     });
 });
 
-app.delete('/usuario/:idUsuario', (req, res) => {
+app.delete('/usuario/:idUsuario', [verificaToken, verificaAdminRole], (req, res) => {
     let id = req.params.idUsuario;
 
     // Usuario.findByIdAndRemove(id, (err, usuarioBorrado) => {                             // Elimina registro
