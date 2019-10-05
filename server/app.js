@@ -14,10 +14,17 @@ app.use(require('../cors/index'));
  * en el objeto req.body los datos que se llenan en un formulario
  * usando application/x-www-form-urlencoded de POSTMAN o del <form>.
  */
- app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
 app.use(bodyParser.json());
+
+// Habilitar carpeta public/
+// Esta linea no funcionara por estar dentro se server/ la variable __dirname = path/server../public
+// app.use(express.static(__dirname + '../public'));
+const path = require('path');
+app.use(express.static(path.resolve(__dirname, '../public')));
+
 
 // Configuracion Global de rutas
 app.use(require('../routes/index'));
