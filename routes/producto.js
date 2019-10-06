@@ -63,8 +63,8 @@ app.get('/producto/buscar/:termino', verificaToken, (req, res) => {
                 return res.status(500).json({status: 'Failed', err});
             
             // Es posible que la RegExp devuelva un arreglo vacio de productoDB = [] abria que validarlo tambien.
-            // con if(!productoDB || productoDB) or if(!productoDB || productoDB === 0)
-            if (!productoDB || productoDB)
+            // con if(!productoDB || !productoDB.length) or if(!productoDB || productoDB.length === 0)
+            if (!productoDB || !productoDB.length)
                 return res.status(400).json({status: 'Failed', err: {message: 'No se encontro producto'}})
 
             res.json({status: 'Ok', producto: productoDB})
