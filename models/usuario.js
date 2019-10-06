@@ -41,6 +41,7 @@ let usuarioSchema = new Schema({
     }
 });
 
+// Eliminando el password del objeto mongoose.model('Usuario', usuarioSchema) así no se devolvera en el print.
 usuarioSchema.methods.toJSON = function() {
     let user = this;
     let userObject = user.toObject();

@@ -58,7 +58,7 @@ app.post('/usuario', [verificaToken, verificaAdminRole], (req, res) => {
             // usuarioDB.password = null; // Es valido pero muestra la propiedad password igual a null
             // La solucion en ../routes/usuario.js la linea usuarioSchema.methods.toJSON ...
 
-            res.json({status: 'Ok', usuario: usuarioDB});   // No es necesario colocar el status 200 ya va implicito
+            res.status(201).json({status: 'Ok', usuario: usuarioDB});   // No es necesario colocar el status 200 ya va implicito
         });        
     }
 });
