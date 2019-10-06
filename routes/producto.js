@@ -50,7 +50,7 @@ app.get('/producto/:id', verificaToken, (req, res) => {
         });
 });
 
-app.get('/producto/buscar/:termino',  (req, res) => {
+app.get('/producto/buscar/:termino', verificaToken, (req, res) => {
     let termino = req.params.termino;
 
     let regex = new RegExp(termino, 'i');   // Usamos una expresion regular sin case sensitive para Buscar.
@@ -62,7 +62,9 @@ app.get('/producto/buscar/:termino',  (req, res) => {
             if (err)
                 return res.status(500).json({status: 'Failed', err});
             
-            if (!productoDB)
+            // Es posible que la RegExp devuelva un arreglo vacio de productoDB = [] abria que validarlo tambien.
+            // con if(!productoDB || productoDB) or if(!productoDB || productoDB === 0)
+            if (!productoDB || productoDB)
                 return res.status(400).json({status: 'Failed', err: {message: 'No se encontro producto'}})
 
             res.json({status: 'Ok', producto: productoDB})
