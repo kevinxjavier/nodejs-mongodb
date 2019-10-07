@@ -18,9 +18,23 @@ let verificaToken = (req, res, next) => {
     // res.json({token});
 };
 
+// Verifa Token Imagen
+let verificaTokenImg = (req, res, next) => {
+    let token = req.query.token;
+    jwt.verify(token, process.env.SEED, (err, decoded) => {
+        if (err) 
+            return res.status(401).json({status: 'Failed', err});
+            // return res.status(401).json({status: 'Failed', err: {message: 'Token no valido'}});
+
+        req.usuario = decoded.usuario;  // Agregamos el Payload del token al req
+
+        next();
+    });
+};
+
 let verificaAdminRole = (req, res, next) => {
 
-    let role = req.usuario.role;
+    let role = req.usuario.role;    // Esto req.usuario se asigna o crea en la funcion verificaToken()
 
     if (role === 'ADMIN_ROLE') 
         next();
@@ -30,5 +44,6 @@ let verificaAdminRole = (req, res, next) => {
 
 module.exports = {
     verificaToken,
+    verificaTokenImg,
     verificaAdminRole
 };
